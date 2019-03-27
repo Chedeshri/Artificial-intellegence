@@ -1,0 +1,58 @@
+import numpy as np
+
+class NeuralNetwork():
+
+    def __init__(self):
+
+        np.random.seed(1)
+        self.synaptic_weights = 2 * np.random.random((3, 1)) - 1
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def sigmoid_derivative(self, x):
+        return x * (1 - x)
+
+    def train(self, training_input, training_output, training_samples):
+
+        for iteration in range(training_samples):
+
+            output = self.think(training_input)
+            error = training_output - output
+            adjustments = np.dot(training_input.T, error * self.sigmoid_derivative(output))
+            self.synaptic_weights += adjustments
+
+
+    def think(self,inputs):
+
+        inputs = inputs.astype(float)
+        output = self.sigmoid(np.dot(inputs, self.synaptic_weights))
+        return output
+
+
+
+if __name__ == "__main__":
+
+    NN = NeuralNetwork()
+    print "Synaptic weights before training"
+    print (NN.synaptic_weights)
+
+    training_input = np.array([[0,0,1],
+                            [1,1,1],
+                            [1,0,1],
+                            [0,1,1]])
+
+    training_output = np.array([[0,1,1,0]]).T
+
+    NN.train(training_input, training_output, 10000)
+
+    print "Synaptic weights after training"
+    print (NN.synaptic_weights)
+
+    A = str(input("Input A : "))
+    B = str(input("Input B : "))
+    C = str(input("Input C : "))
+
+    print ("New input data = ", C, B, A)
+    print ("Output will be : ")
+    print  (NN.think(np.array([A, B, C])))
